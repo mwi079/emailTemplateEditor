@@ -1,24 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef, useState } from "react";
+import EmailEditor from "react-email-editor";
+import SavedTemplates from "./components/savedTemplates";
 
 function App() {
+  const emailEditorRef = useRef(null);
+
+  const [templates, setTemplates] = useState([]);
+
+  const saveTemplate = () => {
+    const unlayer = emailEditorRef.current.editor;
+    unlayer.saveDesign((template) => {
+      setTemplates([...templates, template]);
+    });
+  };
+  const exportHTML = () => {
+    const unlayer = emailEditorRef.current.editor;
+    unlayer.exportHtml((data) => {
+      console.log("send html to email provider", data);
+    });
+  };
+
+  const onSelectTemplate = (id) => {
+    const unlayer = emailEditorRef.current.editor;
+    unlayer.loadDesign(templates[id]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <center>
+      <h1>Create Email Template</h1>
+      <EmailEditor ref={emailEditorRef} />
+      <div>
+        <button onClick={exportHTML}>Exports HTML</button>
+        <button onClick={saveTemplate}>Save Template</button>
+      </div>
+      <SavedTemplates
+        templates={templates}
+        onSelectTemplate={onSelectTemplate}
+      />
+    </center>
   );
 }
 
