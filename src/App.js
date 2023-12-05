@@ -6,11 +6,18 @@ function App() {
   const emailEditorRef = useRef(null);
 
   const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const saveTemplate = () => {
     const unlayer = emailEditorRef.current.editor;
     unlayer.saveDesign((template) => {
-      setTemplates([...templates, template]);
+      if (selectedTemplate) {
+        const templateCopy = [...templates];
+        templateCopy[selectedTemplate] = template;
+        setTemplates(templateCopy);
+      } else {
+        setTemplates([...templates, template]);
+      }
     });
   };
   const exportHTML = () => {
@@ -23,6 +30,13 @@ function App() {
   const onSelectTemplate = (id) => {
     const unlayer = emailEditorRef.current.editor;
     unlayer.loadDesign(templates[id]);
+    setSelectedTemplate(id);
+  };
+  const newEmail = () => {
+    const unlayer = emailEditorRef.current.editor;
+    unlayer.loadBlank();
+    setSelectedTemplate(null);
+    //! can check if user wants to save here
   };
 
   return (
@@ -30,8 +44,13 @@ function App() {
       <h1>Create Email Template</h1>
       <EmailEditor ref={emailEditorRef} />
       <div>
-        <button onClick={exportHTML}>Exports HTML</button>
-        <button onClick={saveTemplate}>Save Template</button>
+        <button onClick={newEmail}>New Email</button>
+        <button onClick={exportHTML}>Export HTML</button>
+        <button onClick={saveTemplate}>
+          {selectedTemplate !== null
+            ? "Update Template"
+            : "Save as new template"}
+        </button>
       </div>
       <SavedTemplates
         templates={templates}
