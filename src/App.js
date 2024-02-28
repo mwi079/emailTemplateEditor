@@ -61,7 +61,23 @@ function App() {
   return (
     <center>
       <h1>Create Email Template</h1>
-      <EmailEditor ref={emailEditorRef} />
+      <EmailEditor
+        ref={emailEditorRef}
+        options={{
+          mergeTags: {
+            first_name: {
+              name: "First Name",
+              value: "{{first_name}}",
+              sample: "John",
+            },
+            last_name: {
+              name: "Last Name",
+              value: "{{last_name}}",
+              sample: "Doe",
+            },
+          },
+        }}
+      />
       <div>
         <button onClick={newEmail}>New Email</button>
         <button onClick={exportHTML}>Export HTML</button>
