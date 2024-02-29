@@ -90,12 +90,14 @@ function App() {
           },
         }}
       />
-      <div style={{ marginTop: "100px" }}>
-        <button onClick={newEmail}>New Email</button>
-        <button onClick={exportHTML}>
+      <div style={{ margin: "100px" }}>
+        <button style={{ margin: "10px" }} onClick={newEmail}>
+          New Template
+        </button>
+        <button style={{ margin: "10px" }} onClick={exportHTML}>
           {showHTML ? "Hide Preview" : "Show Preview"}
         </button>
-        <button onClick={saveTemplate}>
+        <button style={{ margin: "10px" }} onClick={saveTemplate}>
           {selectedTemplate !== null
             ? "Update Template"
             : "Save as new template"}
