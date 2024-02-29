@@ -8,6 +8,8 @@ function App() {
 
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [showHTML, setShowHTML] = useState(false);
+  const [previewHTML, setPreviewHTML] = useState(undefined);
 
   useEffect(() => {
     getAllTemplates();
@@ -40,13 +42,13 @@ function App() {
   const exportHTML = () => {
     const unlayer = emailEditorRef.current.editor;
     unlayer.exportHtml((data) => {
-      console.log("send html to email provider", data);
+      setPreviewHTML(setDynamicContent(data.html));
     });
+    setShowHTML(!showHTML);
   };
 
   const onSelectTemplate = (id) => {
     const unlayer = emailEditorRef.current.editor;
-    console.log(templates, id);
     const selectedTemplate = templates.find((x) => x._id === id);
     unlayer.loadDesign(selectedTemplate);
     setSelectedTemplate(id);
@@ -56,6 +58,16 @@ function App() {
     unlayer.loadBlank();
     setSelectedTemplate(null);
     //! can check if user wants to save here
+  };
+
+  const setDynamicContent = (html) => {
+    const dynamicContent = { first_name: "Rob", last_name: "Moody" };
+
+    Object.keys(dynamicContent).forEach((tag) => {
+      const regex = new RegExp(`{{${tag}}}`, "g");
+      html = html.replace(regex, dynamicContent[tag]);
+    });
+    return html;
   };
 
   return (
@@ -78,9 +90,11 @@ function App() {
           },
         }}
       />
-      <div>
+      <div style={{ marginTop: "100px" }}>
         <button onClick={newEmail}>New Email</button>
-        <button onClick={exportHTML}>Export HTML</button>
+        <button onClick={exportHTML}>
+          {showHTML ? "Hide Preview" : "Show Preview"}
+        </button>
         <button onClick={saveTemplate}>
           {selectedTemplate !== null
             ? "Update Template"
@@ -91,6 +105,12 @@ function App() {
         templates={templates}
         onSelectTemplate={onSelectTemplate}
       />
+      {showHTML && (
+        <div
+          style={{ marginTop: "100px" }}
+          dangerouslySetInnerHTML={{ __html: previewHTML }}
+        />
+      )}
     </center>
   );
 }

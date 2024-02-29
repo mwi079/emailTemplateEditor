@@ -12,7 +12,6 @@ export async function getTemplates() {
 }
 
 export async function postNewTemplate(template) {
-  console.log(template);
   try {
     const result = await axios.post(`${path}/templates`, template);
     return result;
